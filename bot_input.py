@@ -4,15 +4,51 @@ from send_DTO import *
 num_of_turn = 0
 
 
+def not_occupied(tile, player):
+    for t in player.tiles:
+        return not (t.x == tile[0] and t.y == tile[1])
+
+
+def what_is_near(tile, me, other):
+    ok_tiles = []
+    directions = [(1, 1), (1, 0), (1, -1), (0, -1), (-1, -1), (-1, 0), (-1, 1), (0, 1)]
+    for d in directions:
+        new = [tile[0] + d[0], tile[1] + d[1]]
+        if 0 <= new[0] <= 7 and 0 <= new[1] <= 7 and not_occupied(new, me) and not_occupied(new, other):
+            ok_tiles.append(new)
+    return ok_tiles
+
+
 class API:
     def __init__(self):
         self.dto = None
         self.matrix = [[None for i in range(8)] for j in range(8)]
+        self.num_special = 0
+        self.num_tiles = 0
+        self.tiles_checked = 0
+        self.predicted_tiles = 0
 
     def _create_matrix(self):
         for title in self.dto.tiles:
             self.matrix[title.x][title.y] = {'x': title.x, 'y': title.y, 'isPlanted': title.bIsPlanted, 'isSpecial': title.bIsSpecial,
                                              'plant': title.plantDTO}
+
+    def buy_best(self):
+        available_to_buy = []
+        my_tiles = []
+        for mt in self.dto.source.tiles:
+            my_tiles.append((mt.x, mt.y))
+        for t in my_tiles:
+            available_to_buy.extend(what_is_near(t, self.dto.source, self.dto.enemy))
+        for tile in self.dto.tiles:
+            if tile.bIsSpecial:
+                for a in available_to_buy:
+                    if tile.x == a[0] and tile.y == a[1]:
+                        return a
+        if len(available_to_buy) > 0:
+            self.land(available_to_buy[0])
+        else:
+            print("Nije mogao da pronadje ni jedan validan potez")
 
     def water(self, list):
         actions = []
@@ -85,6 +121,14 @@ def bot_input(dto):
     elif num_of_turn == 4:
         return api.harvest()
     elif num_of_turn == 5:
-        return api.shop([(0, 1), (6, 1)])
+        return api.shop([(6, 1), (4, 2), (0, 1)])
+    elif num_of_turn == 6:
+        return api.plant([(6, 0, 0)])
+    elif num_of_turn == 7:
+        return api.water([(1, 0, 0)])
+    elif num_of_turn == 8:
+        return api.harvest()
+    elif num_of_turn == 8:
+        return api.land()
 
     return "{}"
