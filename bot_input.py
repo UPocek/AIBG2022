@@ -1,13 +1,18 @@
-import json
-import requests
 from receive_DTO import *
 from send_DTO import *
+
 num_of_turn = 0
 
+
 class API:
-    def __init__(self, player, opponent):
-        self.player = player
-        self.opponent = opponent
+    def __init__(self):
+        self.dto = None
+        self.matrix = [[None for i in range(8)] for j in range(8)]
+
+    def _create_matrix(self):
+        for title in self.dto.tiles:
+            self.matrix[title.x][title.y] = {'x': title.x, 'y': title.y, 'isPlanted': title.bIsPlanted, 'isSpecial': title.bIsSpecial,
+                                             'plant': title.plantDTO}
 
     def water(self, list):
         actions = []
@@ -34,7 +39,7 @@ class API:
         actions = []
         for item in list:
             if item[1] > 0 and 6 >= item[0] >= 0:
-                actions.append(Action(x=0, y=0, cardid=item[0], amount=item[1]))
+                actions.append(Action(cardid=item[0], amount=item[1]))
         return InputAction("C", actions).toJSON()
 
     def fertilizer(self, ):
@@ -50,33 +55,36 @@ class API:
         return InputAction("H", []).toJSON()
 
 
+api = API()
 
-api = API(None, None)
 
 def heuristic(dto):
     pass
 
 
 def bot_input(dto):
+    # Shop(id,amount)
+    # 0 : Water
+    # 1 : Krtica
+    # 2 : Djubrivo
+    # 3 : Anemone
+    # 4 : BlueJazz
+    # 5 : Crocus
+    # 6 : Tulip
+
     global num_of_turn
-    print(dto)
-    api.player = dto.source
-    api.opponent = dto.enemy
-    if num_of_turn < 9:
-        if num_of_turn % 4 == 1:
-            num_of_turn += 1
-            return api.shop([(0, 1), (6, 1)])
-            # return InputAction('C', [Action(0, 0, 0, 1), Action(0, 0, 6, 1)]).toJSON()
-        elif num_of_turn % 4 == 2:
-            num_of_turn += 1
-            return api.plant([(6, 0, 0)])
-            # return InputAction('P', [Action(cardid=6, x=0, y=0)]).toJSON()
-        elif num_of_turn % 4 == 3:
-            num_of_turn += 1
-            return api.water([(1, 0, 0)])
-        elif num_of_turn % 4 == 0:
-            num_of_turn += 1
-            return api.harvest()
-            # return InputAction('H', [Action(x=0, y=0)]).toJSON()
+    api.dto = dto
+    api._create_matrix()
+    num_of_turn += 1
+    if num_of_turn == 1:
+        return api.shop([(0, 1), (6, 1)])
+    elif num_of_turn == 2:
+        return api.plant([(6, 0, 0)])
+    elif num_of_turn == 3:
+        return api.water([(1, 0, 0)])
+    elif num_of_turn == 4:
+        return api.harvest()
+    elif num_of_turn == 5:
+        return api.shop([(0, 1), (6, 1)])
 
     return "{}"
