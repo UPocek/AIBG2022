@@ -217,7 +217,9 @@ def bot_input(dto):
     elif num_of_turn == 19:
         return api.plant([(4, *api.plant_on_best()), (4, *api.plant_on_best())])
     elif num_of_turn == 20:
-        num_of_turn = 12
         return api.harvest()
+    elif num_of_turn == 21:
+        num_of_turn = 12
+        return api.land([api.buy_best()])
 
     return "{}"
