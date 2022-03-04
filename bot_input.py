@@ -1,6 +1,3 @@
-import time
-
-from receive_DTO import *
 from send_DTO import *
 
 num_of_turn = 0
@@ -25,6 +22,7 @@ def what_is_near(tile, no, me, other):
     return ok_tiles
 
 
+# INTelligence - Tamara Ilic, Bojan Mijanovic, Uros Pocek
 class API:
     def __init__(self):
         self.dto = None
@@ -48,11 +46,6 @@ class API:
         self.num_tiles = len(self.my_tiles)
         self.tiles_available = my_tiles
         self.now_bought = []
-
-    def _create_matrix(self):
-        for title in self.dto.tiles:
-            self.matrix[title.x][title.y] = {'x': title.x, 'y': title.y, 'isPlanted': title.bIsPlanted, 'isSpecial': title.bIsSpecial,
-                                             'plant': title.plantDTO}
 
     def what_to_water(self):
         tiles = []
@@ -103,9 +96,7 @@ class API:
             self.now_bought.append(x)
             return x
         else:
-            print("Nije mogao da pronadje ni jedan validan potez")
-            # SAMOTEST
-            exit()
+            return [0, 0]
 
     def plant_on_best(self):
         for tile in self.dto.tiles:
@@ -118,13 +109,8 @@ class API:
             best = self.tiles_available[0]
             self.tiles_available.remove(best)
         except Exception:
-            print("Trazis da se plentuje, a nemas gde!")
             best = [0, 0]
         return best
-
-    def tile_nearest_opponent(self):
-        best = sorted(self.my_tiles, key=lambda x: x[0] + x[1])
-        return best[0]
 
     def buy_best_flower(self, money):
         cards = {6: [3800, 1],
@@ -189,10 +175,6 @@ class API:
 api = API()
 
 
-def heuristic(dto):
-    pass
-
-
 def bot_input(dto):
     # Shop(id,amount)
     # 0 : Water
@@ -203,7 +185,7 @@ def bot_input(dto):
     # 5 : Crocus
     # 6 : Tulip
 
-    # V2
+    # Final_Version
     global num_of_turn
     api.dto = dto
     api._what_is_mine()
@@ -221,8 +203,6 @@ def bot_input(dto):
         api.what_strategy = 2
     else:
         api.what_strategy = 1
-
-    print(api.what_strategy)
 
     if api.what_strategy == 2:
 
@@ -243,6 +223,13 @@ def bot_input(dto):
             what_to_water = api.what_to_water()
             return api.water(what_to_water)
         elif num_of_turn == 8:
+            change_s = False
+            for tile in api.dto.enemy.tiles:
+                if tile.bIsSpecial:
+                    change_s = True
+                    break
+            if change_s:
+                api.what_strategy = 1
             return api.harvest()
         elif num_of_turn == 9:
             return api.shop([(1, 1)])
