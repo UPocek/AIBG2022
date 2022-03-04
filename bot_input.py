@@ -207,6 +207,7 @@ def bot_input(dto):
     elif num_of_turn == 21:
         return api.land([api.buy_best()])
     elif num_of_turn == 22:
+        num_of_turn = 12
         return api.harvest()
 
     return "{}"
