@@ -7,15 +7,19 @@ num_of_turn = 0
 
 
 def not_occupied(tile, player):
+    if len(player.tiles) <= 0:
+        return True
     for t in player.tiles:
-        return not (t.x == tile[0] and t.y == tile[1])
+        if t.x == tile[0] and t.y == tile[1]:
+            return False
+    return True
 
 
 def what_is_near(tile, no, me, other):
     ok_tiles = []
     directions = [(1, 1), (1, 0), (1, -1), (0, -1), (-1, -1), (-1, 0), (-1, 1), (0, 1)]
     for d in directions:
-        new = [tile[0] + d[0], tile[1] + d[1]]
+        new = (tile[0] + d[0], tile[1] + d[1])
         if 0 <= new[0] <= 7 and 0 <= new[1] <= 7 and not_occupied(new, me) and not_occupied(new, other) and new not in no:
             ok_tiles.append(new)
     return ok_tiles
@@ -74,19 +78,27 @@ class API:
         available_to_buy = []
         diagonal = []
         for t in self.my_tiles:
-            available_to_buy.extend(what_is_near(t, self.now_bought, self.dto.source, self.dto.enemy))
+            win = what_is_near(t, self.now_bought, self.dto.source, self.dto.enemy)
+            for w in win:
+                if w not in available_to_buy:
+                    available_to_buy.append(w)
+            print(available_to_buy)
         for tile in self.dto.tiles:
             if tile.bIsSpecial:
                 for a in available_to_buy:
                     if tile.x == a[0] and tile.y == a[1]:
+                        self.now_bought.append(a)
                         return a
         for a in available_to_buy:
             if a[0] == a[1]:
                 diagonal.append(a)
         if len(diagonal) > 0:
+            self.now_bought.append(diagonal[0])
             return diagonal[0]
         elif len(available_to_buy) > 0:
-            return available_to_buy[0]
+            x = available_to_buy.pop()
+            self.now_bought.append(x)
+            return x
         else:
             print("Nije mogao da pronadje ni jedan validan potez")
             # SAMOTEST
@@ -169,12 +181,13 @@ def bot_input(dto):
     # 5 : Crocus
     # 6 : Tulip
 
+    time.sleep(0.5)
+
     global num_of_turn
     api.dto = dto
     api._create_matrix()
     api._what_is_mine()
     num_of_turn += 1
-    time.sleep(2)
     if num_of_turn == 1:
         return api.shop([(0, 1), (6, 1)])
     elif num_of_turn == 2:
@@ -200,26 +213,37 @@ def bot_input(dto):
     elif num_of_turn == 11:
         return api.harvest()
     elif num_of_turn == 12:
-        return api.shop([(0, 2), (6, 2)])
+        return api.shop([(0, api.num_tiles), (6, api.num_tiles)])
     elif num_of_turn == 13:
-        return api.plant([(6, *api.plant_on_best()), (6, *api.plant_on_best())])
+        a = []
+        for i in range(api.num_tiles):
+            a.append((6, *api.plant_on_best()))
+        return api.plant(a)
     elif num_of_turn == 14:
         what_to_water = api.what_to_water()
         return api.water(what_to_water)
     elif num_of_turn == 15:
         return api.harvest()
     elif num_of_turn == 16:
-        return api.shop([(4, 2), (2, 2)])
+        return api.shop([(4, api.num_tiles), (2, 2)])
     elif num_of_turn == 17:
         return api.fertilizer()
     elif num_of_turn == 18:
         return api.fertilizer()
     elif num_of_turn == 19:
-        return api.plant([(4, *api.plant_on_best()), (4, *api.plant_on_best())])
+        a = []
+        for i in range(api.num_tiles):
+            a.append((4, *api.plant_on_best()))
+        return api.plant(a)
     elif num_of_turn == 20:
         return api.harvest()
     elif num_of_turn == 21:
-        num_of_turn = 12
-        return api.land([api.buy_best()])
+        num_of_turn = 11
+        money = api.dto.source.gold
+        money -= 3800 * api.num_tiles
+        a = []
+        for i in range(money // 5):
+            a.append(api.buy_best())
+        return api.land(a)
 
     return "{}"
