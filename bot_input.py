@@ -123,6 +123,9 @@ class API:
         best = sorted(self.my_tiles, key=lambda x: x[0] + x[1])
         return best[0]
 
+    def buy_best_flower(self):
+        pass
+
     def water(self, list):
         actions = []
         for item in list:
@@ -218,7 +221,7 @@ def bot_input(dto):
     elif num_of_turn == 14:
         return api.harvest()
     elif num_of_turn == 15:
-        return api.shop([(5, 1), (0, 5)])
+        return api.shop([(6, 1), (0, 1)])
     elif num_of_turn == 16:
         return api.plant([(6, *api.plant_on_best())])
     elif num_of_turn == 17:
