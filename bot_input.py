@@ -124,7 +124,24 @@ class API:
         return best[0]
 
     def buy_best_flower(self):
-        pass
+        cards = {6: [3800, 1],
+                 5: [2000, 5],
+                 4: [900, 2],
+                 3: [900, 2]}
+        money = self.dto.source.gold
+        buy = {0: 0}
+        for field in self.my_tiles:
+            for key in cards:
+                if money - cards[key][0] >= 0:
+                    if key in buy:
+                        buy[key] += 1
+                        buy[0] += cards[key][1]
+                    else:
+                        buy[key] = 1
+                        buy[0] += cards[key][1]
+                    money -= cards[key][0]
+                    break
+        return buy
 
     def water(self, list):
         actions = []
@@ -212,7 +229,11 @@ def bot_input(dto):
     elif num_of_turn == 10:
         return api.mole([api.attack_best()])
     elif num_of_turn == 11:
-        return api.shop([(0, 5), (5, 1)])
+        a = []
+        what_to_buy = api.buy_best_flower()
+        for key, value in what_to_buy:
+            a.append((key, value))
+        return api.shop(a)
     elif num_of_turn == 12:
         return api.plant([(5, *api.plant_on_best())])
     elif num_of_turn == 13:
