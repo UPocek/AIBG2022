@@ -199,42 +199,40 @@ def bot_input(dto):
     elif num_of_turn == 4:
         return api.harvest()
     elif num_of_turn == 5:
-        return api.shop([(6, 1), (0, 1), (2, 1)])
-    elif num_of_turn == 6:
-        return api.fertilizer()
-    elif num_of_turn == 7:
-        return api.plant([(6, *api.plant_on_best())])
-    elif num_of_turn == 8:
-        what_to_water = api.what_to_water()
-        return api.water(what_to_water)
-    elif num_of_turn == 9:
-        return api.harvest()
-    elif num_of_turn == 10:
-        return api.shop([(1, 1)])
-    elif num_of_turn == 11:
-        return api.mole([api.attack_best()])
-    elif num_of_turn == 12:
-        return api.shop([(0, 5), (5, 1)])
-    elif num_of_turn == 13:
-        return api.plant([(5, *api.plant_on_best())])
-    elif num_of_turn == 14:
-        what_to_water = api.what_to_water()
-        return api.water(what_to_water)
-    elif num_of_turn == 15:
-        return api.harvest()
-    elif num_of_turn == 16:
         return api.shop([(6, 1), (0, 1)])
-    elif num_of_turn == 17:
+    elif num_of_turn == 6:
         return api.plant([(6, *api.plant_on_best())])
-    elif num_of_turn == 18:
+    elif num_of_turn == 7:
         what_to_water = api.what_to_water()
         return api.water(what_to_water)
-    elif num_of_turn == 19:
+    elif num_of_turn == 8:
         return api.harvest()
-    elif num_of_turn == 20:
+    elif num_of_turn == 9:
         return api.shop([(1, 1)])
-    elif num_of_turn == 21:
-        num_of_turn = 11
+    elif num_of_turn == 10:
+        return api.mole([api.attack_best()])
+    elif num_of_turn == 11:
+        return api.shop([(0, 5), (5, 1)])
+    elif num_of_turn == 12:
+        return api.plant([(5, *api.plant_on_best())])
+    elif num_of_turn == 13:
+        what_to_water = api.what_to_water()
+        return api.water(what_to_water)
+    elif num_of_turn == 14:
+        return api.harvest()
+    elif num_of_turn == 15:
+        return api.shop([(6, 1), (0, 1)])
+    elif num_of_turn == 16:
+        return api.plant([(6, *api.plant_on_best())])
+    elif num_of_turn == 17:
+        what_to_water = api.what_to_water()
+        return api.water(what_to_water)
+    elif num_of_turn == 18:
+        return api.harvest()
+    elif num_of_turn == 19:
+        return api.shop([(1, 1)])
+    elif num_of_turn == 20:
+        num_of_turn = 10
         return api.mole([api.attack_best()])
     # V1
     # time.sleep(0.5)
