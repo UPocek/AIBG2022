@@ -242,13 +242,13 @@ def bot_input(dto):
         for key in what_to_plant:
             for i in range(what_to_plant[key]):
                 a.append((key, *api.plant_on_best()))
+        print(a)
         return api.plant(a)
     elif num_of_turn == 13:
         what_to_water = api.what_to_water()
         return api.water(what_to_water)
     elif num_of_turn == 14:
         return api.harvest()
-
     elif num_of_turn == 15:
         a = []
         money = api.dto.source.gold
