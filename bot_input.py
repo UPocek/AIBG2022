@@ -35,7 +35,7 @@ class API:
         self.tiles_available = None
         self.now_bought = None
         self.last_bought = None
-        self.what_strategy = 2
+        self.what_strategy = 1
 
     def _what_is_mine(self):
         my_tiles = []
@@ -208,12 +208,12 @@ def bot_input(dto):
     api.dto = dto
     api._what_is_mine()
     num_of_turn += 1
-    
+
     uros = False
     we_hope = [(0, 1), (1, 1), (1, 0)]
     for tt in api.dto.tiles:
         new_tt = (tt.x, tt.y)
-        if new_tt in we_hope:
+        if new_tt in we_hope and tt.bIsSpecial:
             uros = True
             break
 
@@ -221,6 +221,8 @@ def bot_input(dto):
         api.what_strategy = 2
     else:
         api.what_strategy = 1
+
+    print(api.what_strategy)
 
     if api.what_strategy == 2:
 
