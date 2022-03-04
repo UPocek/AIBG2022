@@ -75,7 +75,7 @@ class API:
             return diagonal[-1]
         return all[0]
 
-    def buy_best(self):
+    def buy_best(self, all=False):
         available_to_buy = []
         diagonal = []
         for t in self.my_tiles:
@@ -83,7 +83,8 @@ class API:
             for w in win:
                 if w not in available_to_buy:
                     available_to_buy.append(w)
-            print(available_to_buy)
+        if all:
+            return available_to_buy
         for tile in self.dto.tiles:
             if tile.bIsSpecial:
                 for a in available_to_buy:
@@ -266,7 +267,7 @@ def bot_input(dto):
         if len(api.dto.enemy.tiles) > 0:
             return api.mole([api.attack_best()])
         else:
-            return api.land([api.buy_best()])
+            return api.land([api.buy_best(True)])
     elif num_of_turn == 17:
         a = []
         what_to_plant = api.last_bought
