@@ -267,7 +267,10 @@ def bot_input(dto):
         if len(api.dto.enemy.tiles) > 0:
             return api.mole([api.attack_best()])
         else:
-            return api.land([api.buy_best(True)])
+            try:
+                return api.land(api.buy_best(True))
+            except Exception:
+                return api.harvest()
     elif num_of_turn == 17:
         a = []
         what_to_plant = api.last_bought
