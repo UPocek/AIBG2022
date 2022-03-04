@@ -239,6 +239,7 @@ def bot_input(dto):
     elif num_of_turn == 12:
         a = []
         what_to_plant = api.last_bought
+        del what_to_plant[0]
         for key in what_to_plant:
             for i in range(what_to_plant[key]):
                 a.append((key, *api.plant_on_best()))
