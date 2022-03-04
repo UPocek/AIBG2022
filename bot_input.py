@@ -55,6 +55,21 @@ class API:
                 tiles.append((tile.plantDTO.waterNeeded, tile.x, tile.y))
         return tiles
 
+    def attack_best(self):
+        diagonal = []
+        all = []
+        for tile in self.dto.enemy.tiles:
+            best = (tile.x, tile.y)
+            if tile.bIsSpecial:
+                return best
+            elif tile.x == tile.y:
+                diagonal.append(best)
+            else:
+                all.append(best)
+        if len(diagonal) > 0:
+            return diagonal[-1]
+        return all[0]
+
     def buy_best(self):
         available_to_buy = []
         diagonal = []
@@ -184,29 +199,24 @@ def bot_input(dto):
         return api.land([api.buy_best()])
     elif num_of_turn == 11:
         return api.harvest()
-    if num_of_turn == 12:
-        return api.shop([(0, 1), (6, 1)])
+    elif num_of_turn == 12:
+        return api.shop([(0, 2), (6, 2)])
     elif num_of_turn == 13:
-        return api.plant([(6, *api.plant_on_best())])
+        return api.plant([(6, *api.plant_on_best()), (6, *api.plant_on_best())])
     elif num_of_turn == 14:
         what_to_water = api.what_to_water()
         return api.water(what_to_water)
     elif num_of_turn == 15:
         return api.harvest()
     elif num_of_turn == 16:
-        return api.shop([(6, 1), (4, 1), (0, 1)])
+        return api.shop([(4, 2), (2, 2)])
     elif num_of_turn == 17:
-        return api.plant([(6, *api.plant_on_best())])
+        return api.fertilizer()
     elif num_of_turn == 18:
-        what_to_water = api.what_to_water()
-        return api.water(what_to_water)
+        return api.fertilizer()
     elif num_of_turn == 19:
-        return api.harvest()
+        return api.plant([(4, *api.plant_on_best()), (4, *api.plant_on_best())])
     elif num_of_turn == 20:
-        return api.plant([(4, *api.plant_on_best())])
-    elif num_of_turn == 21:
-        return api.land([api.buy_best()])
-    elif num_of_turn == 22:
         num_of_turn = 12
         return api.harvest()
 
