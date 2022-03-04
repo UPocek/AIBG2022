@@ -35,6 +35,7 @@ class API:
         self.tiles_available = None
         self.now_bought = None
         self.last_bought = None
+        self.what_strategy = 2
 
     def _what_is_mine(self):
         my_tiles = []
@@ -207,149 +208,188 @@ def bot_input(dto):
     api.dto = dto
     api._what_is_mine()
     num_of_turn += 1
-    if num_of_turn == 1:
-        return api.shop([(0, 1), (6, 1)])
-    elif num_of_turn == 2:
-        return api.plant([(6, *api.plant_on_best())])
-    elif num_of_turn == 3:
-        what_to_water = api.what_to_water()
-        return api.water(what_to_water)
-    elif num_of_turn == 4:
-        return api.harvest()
-    elif num_of_turn == 5:
-        return api.shop([(6, 1), (0, 1)])
-    elif num_of_turn == 6:
-        return api.plant([(6, *api.plant_on_best())])
-    elif num_of_turn == 7:
-        what_to_water = api.what_to_water()
-        return api.water(what_to_water)
-    elif num_of_turn == 8:
-        return api.harvest()
-    elif num_of_turn == 9:
-        return api.shop([(1, 1)])
-    elif num_of_turn == 10:
-        return api.mole([api.attack_best()])
-    elif num_of_turn == 11:
-        a = []
-        money = api.dto.source.gold
-        what_to_buy = api.buy_best_flower(money)
-        api.last_bought = what_to_buy
-        for key, value in what_to_buy.items():
-            a.append((key, value))
-        return api.shop(a)
-    elif num_of_turn == 12:
-        a = []
-        what_to_plant = api.last_bought
-        del what_to_plant[0]
-        for key in what_to_plant:
-            for i in range(what_to_plant[key]):
-                a.append((key, *api.plant_on_best()))
-        print(a)
-        return api.plant(a)
-    elif num_of_turn == 13:
-        what_to_water = api.what_to_water()
-        return api.water(what_to_water)
-    elif num_of_turn == 14:
-        return api.harvest()
-    elif num_of_turn == 15:
-        a = []
-        money = api.dto.source.gold
-        if len(api.dto.enemy.tiles) > 0:
-            if money >= 10000:
-                a.append((1, 1))
-                money -= 10000
-        what_else_to_buy = api.buy_best_flower(money)
-        api.last_bought = what_else_to_buy
-        for key, value in what_else_to_buy.items():
-            a.append((key, value))
-        return api.shop(a)
-    elif num_of_turn == 16:
-        if len(api.dto.enemy.tiles) > 0:
-            return api.mole([api.attack_best()])
-        else:
-            try:
-                return api.land(api.buy_best(True))
-            except Exception:
-                return api.harvest()
-    elif num_of_turn == 17:
-        a = []
-        what_to_plant = api.last_bought
-        del what_to_plant[0]
-        for key in what_to_plant:
-            for i in range(what_to_plant[key]):
-                a.append((key, *api.plant_on_best()))
-        return api.plant(a)
-    elif num_of_turn == 18:
-        what_to_water = api.what_to_water()
-        return api.water(what_to_water)
-    elif num_of_turn == 19:
-        num_of_turn = 14
-        return api.harvest()
+    
+    uros = False
+    we_hope = [(0, 1), (1, 1), (1, 0)]
+    for tt in api.dto.tiles:
+        new_tt = (tt.x, tt.y)
+        if new_tt in we_hope:
+            uros = True
+            break
 
-    # V1
-    # time.sleep(0.5)
-    #
-    # global num_of_turn
-    # api.dto = dto
-    # api._create_matrix()
-    # api._what_is_mine()
-    # num_of_turn += 1
-    # if num_of_turn == 1:
-    #     return api.shop([(0, 1), (6, 1)])
-    # elif num_of_turn == 2:
-    #     return api.plant([(6, *api.plant_on_best())])
-    # elif num_of_turn == 3:
-    #     what_to_water = api.what_to_water()
-    #     return api.water(what_to_water)
-    # elif num_of_turn == 4:
-    #     return api.harvest()
-    # elif num_of_turn == 5:
-    #     return api.shop([(6, 1), (4, 1), (0, 1)])
-    # elif num_of_turn == 6:
-    #     return api.plant([(6, *api.plant_on_best())])
-    # elif num_of_turn == 7:
-    #     what_to_water = api.what_to_water()
-    #     return api.water(what_to_water)
-    # elif num_of_turn == 8:
-    #     return api.harvest()
-    # elif num_of_turn == 9:
-    #     return api.plant([(4, *api.plant_on_best())])
-    # elif num_of_turn == 10:
-    #     return api.land([api.buy_best()])
-    # elif num_of_turn == 11:
-    #     return api.harvest()
-    # elif num_of_turn == 12:
-    #     return api.shop([(0, api.num_tiles), (6, api.num_tiles)])
-    # elif num_of_turn == 13:
-    #     a = []
-    #     for i in range(api.num_tiles):
-    #         a.append((6, *api.plant_on_best()))
-    #     return api.plant(a)
-    # elif num_of_turn == 14:
-    #     what_to_water = api.what_to_water()
-    #     return api.water(what_to_water)
-    # elif num_of_turn == 15:
-    #     return api.harvest()
-    # elif num_of_turn == 16:
-    #     return api.shop([(4, api.num_tiles), (2, 2)])
-    # elif num_of_turn == 17:
-    #     return api.fertilizer()
-    # elif num_of_turn == 18:
-    #     return api.fertilizer()
-    # elif num_of_turn == 19:
-    #     a = []
-    #     for i in range(api.num_tiles):
-    #         a.append((4, *api.plant_on_best()))
-    #     return api.plant(a)
-    # elif num_of_turn == 20:
-    #     return api.harvest()
-    # elif num_of_turn == 21:
-    #     num_of_turn = 11
-    #     money = api.dto.source.gold
-    #     money -= 3800 * api.num_tiles
-    #     a = []
-    #     for i in range(money // 5):
-    #         a.append(api.buy_best())
-    #     return api.land(a)
+    if uros:
+        api.what_strategy = 2
+    else:
+        api.what_strategy = 1
+
+    if api.what_strategy == 2:
+
+        if num_of_turn == 1:
+            return api.shop([(0, 1), (6, 1)])
+        elif num_of_turn == 2:
+            return api.plant([(6, *api.plant_on_best())])
+        elif num_of_turn == 3:
+            what_to_water = api.what_to_water()
+            return api.water(what_to_water)
+        elif num_of_turn == 4:
+            return api.harvest()
+        elif num_of_turn == 5:
+            return api.shop([(6, 1), (0, 1)])
+        elif num_of_turn == 6:
+            return api.plant([(6, *api.plant_on_best())])
+        elif num_of_turn == 7:
+            what_to_water = api.what_to_water()
+            return api.water(what_to_water)
+        elif num_of_turn == 8:
+            return api.harvest()
+        elif num_of_turn == 9:
+            return api.shop([(1, 1)])
+        elif num_of_turn == 10:
+            return api.mole([api.attack_best()])
+        elif num_of_turn == 11:
+            a = []
+            money = api.dto.source.gold
+            what_to_buy = api.buy_best_flower(money)
+            api.last_bought = what_to_buy
+            for key, value in what_to_buy.items():
+                a.append((key, value))
+            return api.shop(a)
+        elif num_of_turn == 12:
+            a = []
+            what_to_plant = api.last_bought
+            del what_to_plant[0]
+            for key in what_to_plant:
+                for i in range(what_to_plant[key]):
+                    a.append((key, *api.plant_on_best()))
+            return api.plant(a)
+        elif num_of_turn == 13:
+            what_to_water = api.what_to_water()
+            return api.water(what_to_water)
+        elif num_of_turn == 14:
+            return api.harvest()
+        elif num_of_turn == 15:
+            a = []
+            money = api.dto.source.gold
+            if len(api.dto.enemy.tiles) > 0:
+                if money >= 10000:
+                    a.append((1, 1))
+                    money -= 10000
+            what_else_to_buy = api.buy_best_flower(money)
+            api.last_bought = what_else_to_buy
+            for key, value in what_else_to_buy.items():
+                a.append((key, value))
+            return api.shop(a)
+        elif num_of_turn == 16:
+            if len(api.dto.enemy.tiles) > 0:
+                return api.mole([api.attack_best()])
+            else:
+                try:
+                    return api.land(api.buy_best(True))
+                except Exception:
+                    return api.harvest()
+        elif num_of_turn == 17:
+            a = []
+            what_to_plant = api.last_bought
+            del what_to_plant[0]
+            for key in what_to_plant:
+                for i in range(what_to_plant[key]):
+                    a.append((key, *api.plant_on_best()))
+            return api.plant(a)
+        elif num_of_turn == 18:
+            what_to_water = api.what_to_water()
+            return api.water(what_to_water)
+        elif num_of_turn == 19:
+            num_of_turn = 14
+            return api.harvest()
+
+    else:
+
+        if num_of_turn == 1:
+            return api.shop([(0, 1), (6, 1)])
+        elif num_of_turn == 2:
+            x, y = api.plant_on_best()
+            return api.plant([(6, x, y)])
+        elif num_of_turn == 3:
+            tiles = []
+            for tile in api.dto.source.tiles:
+                if tile.bIsPlanted:
+                    tiles.append((tile.plantDTO.waterNeeded, tile.x, tile.y))
+            return api.water(tiles)
+        elif num_of_turn == 4:
+            return api.harvest()
+        elif num_of_turn == 5:
+            return api.shop([(6, 2), (0, 4), (4, 1)])
+        elif num_of_turn == 6:
+            x, y = api.plant_on_best()
+            return api.plant([(6, x, y)])
+        elif num_of_turn == 7:
+            tiles = []
+            for tile in api.dto.source.tiles:
+                if tile.bIsPlanted:
+                    tiles.append((tile.plantDTO.waterNeeded, tile.x, tile.y))
+            return api.water(tiles)
+        elif num_of_turn == 8:
+            return api.harvest()
+        elif num_of_turn == 9:
+            return api.land([api.buy_best()])
+        elif num_of_turn == 10:
+            x, y = api.plant_on_best()
+            x1, y1 = api.plant_on_best()
+            return api.plant([(6, x, y), (4, x1, y1)])
+        elif num_of_turn == 11:
+            tiles = []
+            for tile in api.dto.source.tiles:
+                if tile.bIsPlanted:
+                    tiles.append((tile.plantDTO.waterNeeded, tile.x, tile.y))
+            return api.water(tiles)
+        elif num_of_turn == 12:
+            return api.harvest()
+        else:
+            if num_of_turn % 5 == 3:
+                num_of_tulip = 0
+                num_of_jazz = 0
+                num_of_moles = 0
+                for card in dto.source.cards:
+                    if card.cardId == 1:
+                        num_of_moles = card.owned
+                if dto.source.gold > 10000 and num_of_moles == 0:
+                    money = dto.source.gold - 10000
+                else:
+                    money = dto.source.gold
+                if len(dto.source.tiles) <= money // 3800:
+                    num_of_tulip = len(dto.source.tiles)
+                else:
+                    num_of_tulip = money // 3800
+                money_left = money - num_of_tulip * 3800
+                if len(dto.source.tiles) - num_of_tulip <= money_left // 900:
+                    num_of_jazz = len(dto.source.tiles) - num_of_tulip
+                else:
+                    num_of_jazz = money_left // 900
+
+                return api.shop([(1, 1 - num_of_moles), (6, num_of_tulip), (4, num_of_jazz), (0, num_of_tulip + num_of_jazz * 2)])
+            elif num_of_turn % 5 == 4:
+                if len(dto.enemy.tiles) > 0:
+                    polje = api.attack_best()
+                    return api.mole([(polje[0], polje[1])])
+                else:
+                    land = api.buy_best(True)
+                    return api.land(land)
+            elif num_of_turn % 5 == 0:
+                list = []
+                dto.source.cards = sorted(dto.source.cards, key=lambda x: x.cardId, reverse=True)
+                for card in dto.source.cards:
+                    if card.cardId in [3, 4, 5, 6]:
+                        for i in range(card.owned):
+                            x, y = api.plant_on_best()
+                            list.append((card.cardId, x, y))
+                return api.plant(list)
+            elif num_of_turn % 5 == 1:
+                tiles = []
+                for tile in api.dto.source.tiles:
+                    if tile.bIsPlanted:
+                        tiles.append((tile.plantDTO.waterNeeded, tile.x, tile.y))
+                return api.water(tiles)
+            elif num_of_turn % 5 == 2:
+                return api.harvest()
 
     return "{}"
