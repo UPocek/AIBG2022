@@ -1,3 +1,5 @@
+import time
+
 from receive_DTO import *
 from send_DTO import *
 
@@ -27,13 +29,15 @@ class API:
         self.num_special = 0
         self.num_tiles = 0
         self.tiles_available = None
-        self.now_both = None
-        self.predicted_tiles = 0
+        self.now_bought = None
 
     def _what_is_mine(self):
         my_tiles = []
+        self.num_special = 0
         for mt in self.dto.source.tiles:
             my_tiles.append((mt.x, mt.y))
+            if mt.bIsSpecial:
+                self.num_special += 1
         self.my_tiles = my_tiles
         self.num_tiles = len(self.my_tiles)
         self.tiles_available = my_tiles
@@ -43,6 +47,13 @@ class API:
         for title in self.dto.tiles:
             self.matrix[title.x][title.y] = {'x': title.x, 'y': title.y, 'isPlanted': title.bIsPlanted, 'isSpecial': title.bIsSpecial,
                                              'plant': title.plantDTO}
+
+    def what_to_water(self):
+        tiles = []
+        for tile in self.dto.source.tiles:
+            if tile.bIsPlanted:
+                tiles.append((tile.plantDTO.waterNeeded, tile.x, tile.y))
+        return tiles
 
     def buy_best(self):
         available_to_buy = []
@@ -68,14 +79,22 @@ class API:
 
     def plant_on_best(self):
         for tile in self.dto.tiles:
-            if tile.bIsSpeciala:
-                best = [tile.x, tile.y]
+            if tile.bIsSpecial:
+                best = (tile.x, tile.y)
                 if best in self.tiles_available:
                     self.tiles_available.remove(best)
                     return best
-        best = self.tiles_available[0]
-        self.tiles_available.remove(best)
+        try:
+            best = self.tiles_available[0]
+            self.tiles_available.remove(best)
+        except Exception:
+            print("Trazis da se plentuje, a nemas gde!")
+            best = [0, 0]
         return best
+
+    def tile_nearest_opponent(self):
+        best = sorted(self.my_tiles, key=lambda x: x[0] + x[1])
+        return best[0]
 
     def water(self, list):
         actions = []
@@ -140,25 +159,54 @@ def bot_input(dto):
     api._create_matrix()
     api._what_is_mine()
     num_of_turn += 1
+    time.sleep(2)
     if num_of_turn == 1:
         return api.shop([(0, 1), (6, 1)])
     elif num_of_turn == 2:
-        return api.plant([(6, 0, 0)])
+        return api.plant([(6, *api.plant_on_best())])
     elif num_of_turn == 3:
-        return api.water([(1, 0, 0)])
+        what_to_water = api.what_to_water()
+        return api.water(what_to_water)
     elif num_of_turn == 4:
         return api.harvest()
     elif num_of_turn == 5:
-        return api.shop([(6, 1), (4, 2), (0, 1)])
+        return api.shop([(6, 1), (4, 1), (0, 1)])
     elif num_of_turn == 6:
-        return api.plant([(6, 0, 0)])
+        return api.plant([(6, *api.plant_on_best())])
     elif num_of_turn == 7:
-        return api.water([(1, 0, 0)])
+        what_to_water = api.what_to_water()
+        return api.water(what_to_water)
     elif num_of_turn == 8:
         return api.harvest()
     elif num_of_turn == 9:
-        return api.buy_best()
+        return api.plant([(4, *api.plant_on_best())])
     elif num_of_turn == 10:
-        return api.plant(())
+        return api.land([api.buy_best()])
+    elif num_of_turn == 11:
+        return api.harvest()
+    if num_of_turn == 12:
+        return api.shop([(0, 1), (6, 1)])
+    elif num_of_turn == 13:
+        return api.plant([(6, *api.plant_on_best())])
+    elif num_of_turn == 14:
+        what_to_water = api.what_to_water()
+        return api.water(what_to_water)
+    elif num_of_turn == 15:
+        return api.harvest()
+    elif num_of_turn == 16:
+        return api.shop([(6, 1), (4, 1), (0, 1)])
+    elif num_of_turn == 17:
+        return api.plant([(6, *api.plant_on_best())])
+    elif num_of_turn == 18:
+        what_to_water = api.what_to_water()
+        return api.water(what_to_water)
+    elif num_of_turn == 19:
+        return api.harvest()
+    elif num_of_turn == 20:
+        return api.plant([(4, *api.plant_on_best())])
+    elif num_of_turn == 21:
+        return api.land([api.buy_best()])
+    elif num_of_turn == 22:
+        return api.harvest()
 
     return "{}"
