@@ -231,6 +231,7 @@ def bot_input(dto):
     elif num_of_turn == 11:
         a = []
         what_to_buy = api.buy_best_flower()
+        print(what_to_buy)
         for key, value in what_to_buy:
             a.append((key, value))
         return api.shop(a)
