@@ -207,9 +207,30 @@ def bot_input(dto):
     elif num_of_turn == 9:
         return api.shop([(1, 1)])
     elif num_of_turn == 10:
-        num_of_turn = 0
         return api.mole([api.attack_best()])
-
+    elif num_of_turn == 11:
+        return api.shop([(0, 5), (5, 1)])
+    elif num_of_turn == 12:
+        return api.plant([(5, *api.plant_on_best())])
+    elif num_of_turn == 13:
+        what_to_water = api.what_to_water()
+        return api.water(what_to_water)
+    elif num_of_turn == 14:
+        return api.harvest()
+    elif num_of_turn == 15:
+        return api.shop([(5, 1), (0, 5)])
+    elif num_of_turn == 16:
+        return api.plant([(6, *api.plant_on_best())])
+    elif num_of_turn == 17:
+        what_to_water = api.what_to_water()
+        return api.water(what_to_water)
+    elif num_of_turn == 18:
+        return api.harvest()
+    elif num_of_turn == 19:
+        return api.shop([(1, 1)])
+    elif num_of_turn == 20:
+        num_of_turn = 10
+        return api.mole([api.attack_best()])
     # V1
     # time.sleep(0.5)
     #
