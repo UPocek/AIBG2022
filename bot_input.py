@@ -224,10 +224,13 @@ def bot_input(dto):
             return api.water(what_to_water)
         elif num_of_turn == 8:
             change_s = False
-            for tile in api.dto.enemy.tiles:
-                if tile.bIsSpecial:
-                    change_s = True
-                    break
+            try:
+                for tile in api.dto.enemy.tiles:
+                    if tile.bIsSpecial:
+                        change_s = True
+                        break
+            except Exception:
+                pass
             if change_s:
                 api.what_strategy = 1
             return api.harvest()
